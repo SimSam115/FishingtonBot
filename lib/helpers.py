@@ -1,4 +1,5 @@
 import PIL.ImageOps
+from PIL.Image import Image
 
 def pull_threshold(color:tuple):
     return 245 < color[0] <= 255 and \
@@ -42,3 +43,42 @@ def getFishingDetails(im):
 
 
     return loc
+
+def threshold(color:tuple):
+    return 180 < color[0] <= 255 and \
+           180 < color[1] <= 255 and \
+           180 < color[2] <= 255
+
+def cleanImage(img:Image, frontOffset:int = 75):
+    i = img.resize((int(img.size[0]*9),int(img.size[1]*7.5))).convert("RGB")
+    pixdata = i.load()
+
+    # if pixel is white, convert to black; anything other than white, convert to white
+    # this converts the white bubble text from the money amount into an easier parseable image
+    for y in range(i.size[1]):
+        for x in range(i.size[0]):
+            if not threshold(pixdata[x, y]):
+                pixdata[x, y] = (255, 255, 255)
+            else:
+                pixdata[x, y] = (0, 0, 0)
+
+    pixdata = i.load()
+    startX = 0
+    endX = 0
+    extra = 0
+    for x in range(i.size[0]):
+        if pixdata[x,i.size[1]/2] == (0, 0, 0) and startX == 0:
+            startX = x
+
+        if startX > 0:
+            if pixdata[x,i.size[1]/2] == (0, 0, 0):
+                extra = 0
+                endX = x
+            if pixdata[x,25] == (255, 255, 255):
+                extra += 1
+            if extra > 250:
+                break
+
+    # print("end of photo:" + str(endX))
+
+    return i.crop((startX+frontOffset,0,min(i.size[0],endX+100),i.size[1]))

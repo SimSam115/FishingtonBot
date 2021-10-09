@@ -1,10 +1,13 @@
 import time
 from lib.helpers import *
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
 
 import pygetwindow as pwin
 import pyautogui as pauto
 
-
+phaseNames = ("start", "casting line", "reeling", " selling basket")
 class Phases:
     START = 0
     CASTING = 1
@@ -26,11 +29,11 @@ class GameWindow:
         self.active = True
         self.phase = Phases.START
         self.fish_count = 0
+        self.total_fish_count = 0
         time.sleep(0.5)
 
     def cast(self):
         self.phase = Phases.CASTING
-        self.fish_count = 0
         pauto.moveTo(x = self.win.left + 600, y = self.win.top + 800)
         pauto.mouseDown()
         time.sleep(1)
@@ -49,7 +52,21 @@ class GameWindow:
         x,y = pauto.position()
         return x - self.win.left, y - self.win.top
 
+    def setFishCount(self):
+        image1 = pauto.screenshot(region=(self.win.left + 1080,self.win.top + 901, 60, 20))
+        image1 = cleanImage(image1,-5)
+        #image1.show()
+        ocr_result = pytesseract.image_to_string(image1, lang='eng',
+                                                 config='--psm 8 --oem 3 -c tessedit_char_whitelist=/0123456789')
+        try:
+            self.fish_count = int(ocr_result.split('/')[0])
+        except TypeError:
+            print("not this time bud")
+
+
     def sellAllFish(self):
+        self.total_fish_count += self.fish_count
+
         self.click((682, 338))
         time.sleep(1)
         self.click(self.S_ALL_BUTTON)
@@ -80,9 +97,12 @@ class GameWindow:
             time.sleep(2.5)
             self.click((835, 625))
             time.sleep(1)
-            self.fish_count += 1
-            if self.fish_count > 9:
+            self.setFishCount()
+            if self.fish_count > 11:
                 self.phase = Phases.FULL_BASKET
-                self.fish_count = 0
             else:
                 self.phase = Phases.START
+
+    def __str__(self):
+        return "Current Phase: %15s, currentFish: %3d : totalFish: %3d" % \
+                (phaseNames[self.phase],self.fish_count,self.total_fish_count)
