@@ -1,5 +1,4 @@
-import time
-from PIL import Image
+import time, datetime
 from lib.helpers import *
 from lib.gameWindow import *
 
@@ -11,6 +10,7 @@ def main():
     gameCon.setFishCount()
     print(gameCon)
     castTime = 0
+    gameCon.phase = Phases.FULL_BASKET
 
     while gameCon.active:
 
@@ -38,7 +38,15 @@ def main():
             pauto.keyDown('w')
             time.sleep(0.6)
             pauto.keyUp('w')
+
+
+            file = open("log.txt",'a')
             gameCon.sellAllFish()
+            now = datetime.datetime.now()
+            output = "Time: %2d:%2d -> totalFish %3d \n" % (now.hour, now.minute,gameCon.total_fish_count)
+            file.write(output)
+            file.close()
+
             pauto.keyDown('s')
             time.sleep(1)
             pauto.keyUp('s')

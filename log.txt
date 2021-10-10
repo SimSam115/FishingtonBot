@@ -1,0 +1,18 @@
+Time:  9:53 -> totalFish   1 
+Time: 10: 0 -> totalFish  13 
+Time: 10: 7 -> totalFish  25 
+Time: 10:14 -> totalFish  37 
+Time: 10:20 -> totalFish  49 
+Time: 10:27 -> totalFish  61 
+Time: 10:34 -> totalFish  73 
+Time: 10:41 -> totalFish  85 
+Time: 10:47 -> totalFish  97 
+Time: 10:55 -> totalFish 109 
+Time: 11: 1 -> totalFish 121 
+Time: 12:18 -> totalFish   1 
+Time: 12:26 -> totalFish   5 
+Time: 12:34 -> totalFish   1 
+Time: 12:43 -> totalFish  13 
+Time: 12:50 -> totalFish  25 
+Time: 12:57 -> totalFish  10 
+Time: 18:55 -> totalFish   0 
